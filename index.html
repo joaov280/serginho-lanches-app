@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Serginho Lanches | Delivery Oficial</title>
+    
+    <link rel="icon" type="image/png" href="logo.png">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- TEMA PREMIUM DARK --- */
+        :root {
+            --bg-color: #0f0f11;
+            --surface: #1c1c1e;
+            --surface-hover: #2c2c2e;
+            --primary: #e62429;
+            --primary-glow: rgba(230, 36, 41, 0.3);
+            --text-title: #ffffff;
+            --text-body: #a1a1aa;
+            --success: #10b981;
+            --border: #27272a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        html { scroll-behavior: smooth; }
+        
+        body { background-color: var(--bg-color); color: var(--text-title); padding-bottom: 100px; }
+
+        /* --- HERO HEADER --- */
+        .hero {
+            position: relative;
+            height: 220px;
+            background: linear-gradient(to top, var(--bg-color) 0%, transparent 100%), 
+                        url('https://images.unsplash.com/photo-1550547660-d9450f859349?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80') center/cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px;
+        }
+
+        .loja-info { position: relative; z-index: 2; display: flex; align-items: center; gap: 15px; }
+        
+        /* NOVO ESQUEMA DA LOGO COM ZOOM REAL */
+        .logo-wrapper {
+            width: 105px; 
+            height: 105px; 
+            border-radius: 50%; 
+            border: 2px solid var(--primary); 
+            background: #fff; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            overflow: hidden; /* Corta o que passar da bolinha */
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        
+        .loja-logo { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain; 
+            /* O scale dá o zoom, e o translateY empurra a imagem pra cima pra centralizar */
+            transform: scale(1.7) translateY(6%); 
+        }
+
+        .loja-textos h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; }
+        .loja-textos p { color: #d4d4d8; font-size: 0.85rem; margin-top: 4px; display: flex; align-items: center; gap: 5px; }
+        
+        /* STATUS DA LOJA (Aberto/Fechado) */
+        .badge-aberto { background: var(--success); color: #000; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
+        .badge-fechado { background: var(--primary); color: #fff; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
+
+        /* --- NAV DE CATEGORIAS (STICKY) --- */
+        .category-nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(15, 15, 17, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            display: flex; overflow-x: auto; gap: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        .category-nav::-webkit-scrollbar { display: none; }
+        .cat-btn {
+            background: var(--surface); color: var(--text-body);
+            border: 1px solid var(--border); padding: 8px 16px;
+            border-radius: 20px; font-weight: 600; font-size: 0.9rem;
+            white-space: nowrap; cursor: pointer; transition: 0.3s;
+        }
+        .cat-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 4px 10px var(--primary-glow); }
+
+        /* --- CONTAINER DO CARDÁPIO --- */
+        .container { max-width: 600px; margin: 0 auto; padding: 0 20px; }
+
+        .section-title { font-size: 1.2rem; font-weight: 700; margin: 30px 0 15px 0; color: var(--text-title); }
+
+        /* --- CARD DE PRODUTO ESTILO APP --- */
+        .product-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 16px; padding: 16px; margin-bottom: 16px;
+            display: flex; justify-content: space-between; gap: 15px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .product-card:active { transform: scale(0.98); }
+        
+        .product-info { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .product-info h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 6px; }
+        .product-info p { font-size: 0.85rem; color: var(--text-body); line-height: 1.4; margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        
+        .price-row { display: flex; align-items: center; gap: 8px; }
+        .price { font-weight: 700; color: var(--success); font-size: 1.1rem; }
+        .old-price { text-decoration: line-through; color: #52525b; font-size: 0.85rem; }
+
+        .product-right { display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; }
+        
+        .product-img {
+            width: 85px; height: 85px; border-radius: 12px; object-fit: cover;
+            background: #27272a url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%2352525b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>') no-repeat center;
+        }
+
+        .add-btn {
+            background: var(--bg-color); color: var(--primary);
+            border: 1px solid var(--primary); border-radius: 8px;
+            padding: 6px 16px; font-weight: 700; cursor: pointer; margin-top: 10px;
+        }
+        .add-btn:active { background: var(--primary); color: #fff; }
+
+        .qtd-control {
+            display: none; align-items: center; background: var(--primary);
+            border-radius: 8px; margin-top: 10px; overflow: hidden;
+        }
+        .qtd-control button { background: none; border: none; color: white; padding: 6px 12px; font-size: 1.1rem; cursor: pointer; }
+        .qtd-control span { color: white; font-weight: 700; width: 20px; text-align: center; font-size: 0.9rem; }
+
+        /* --- BOTÃO FLUTUANTE (BOTTOM SHEET) --- */
+        .cart-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: var(--surface); border-top: 1px solid var(--border);
+            padding: 15px 20px; display: none; justify-content: center; z-index: 1000;
+            animation: slideUp 0.3s ease;
+        }
+        .cart-bar-inner { max-width: 600px; width: 100%; display: flex; justify-content: space-between; align-items: center; }
+        .cart-resume { display: flex; flex-direction: column; }
+        .cart-resume small { color: var(--text-body); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;}
+        .cart-resume strong { font-size: 1.4rem; color: #fff; }
+        .checkout-btn {
+            background: var(--primary); color: white; border: none;
+            padding: 14px 24px; border-radius: 12px; font-weight: 700; font-size: 1rem;
+            cursor: pointer; box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+        /* --- MODAL CHEKOUT --- */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+            display: none; align-items: flex-end; justify-content: center; z-index: 2000;
+        }
+        .modal-content {
+            background: var(--bg-color); width: 100%; max-width: 600px;
+            border-radius: 24px 24px 0 0; padding: 30px 20px;
+            animation: slideUp 0.3s ease; border-top: 1px solid var(--border);
+            max-height: 90vh; overflow-y: auto;
+        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .modal-header h2 { font-size: 1.3rem; }
+        .close-btn { background: var(--surface); border: none; color: white; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; }
+
+        .input-group { margin-bottom: 16px; }
+        .input-group label { display: block; font-size: 0.85rem; color: var(--text-body); margin-bottom: 6px; font-weight: 600;}
+        .input-group input, .input-group select {
+            width: 100%; padding: 16px; background: var(--surface); color: white;
+            border: 1px solid var(--border); border-radius: 12px; font-size: 1rem; outline: none;
+        }
+        .input-group input:focus, .input-group select:focus { border-color: var(--primary); }
+
+        .btn-wpp {
+            width: 100%; background: var(--success); color: #000;
+            padding: 16px; border-radius: 12px; border: none; font-weight: 800; font-size: 1.1rem;
+            margin-top: 10px; cursor: pointer; display: flex; justify-content: center; gap: 8px;
+        }
+
+        /* --- TOAST DE NOTIFICAÇÃO --- */
+        #toast {
+            visibility: hidden; min-width: 250px; background-color: var(--success); color: #000;
+            text-align: center; border-radius: 30px; padding: 12px 20px; font-weight: 600;
+            position: fixed; z-index: 3000; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 0.9rem;
+        }
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+        @keyframes fadein { from { bottom: 0; opacity: 0; } to { bottom: 30px; opacity: 1; } }
+        @keyframes fadeout { from { bottom: 30px; opacity: 1; } to { bottom: 0; opacity: 0; } }
+
+    </style>
+</head>
+<body>
+
+    <header class="hero">
+        <div class="loja-info">
+            
+            <div class="logo-wrapper">
+                <img src="logo.png" alt="Logo Serginho Lanches" class="loja-logo">
+            </div>
+            
+            <div class="loja-textos">
+                <h1>Serginho Lanches</h1>
+                <p><span id="status-loja" class="badge-fechado">Calculando...</span> Qui a Dom - 18:30 às 23:00</p>
+                <p style="font-size: 0.8rem; margin-top: 8px;"><i class="fa-solid fa-location-dot"></i> Rua Octacílio de Andrade Tourinho, 11-08</p>
+            </div>
+        </div>
+    </header>
+
+    <nav class="category-nav" id="nav-categorias"></nav>
+
+    <main class="container" id="menu-container"></main>
+
+    <div class="cart-bar" id="cart-bar">
+        <div class="cart-bar-inner">
+            <div class="cart-resume">
+                <small>Total a pagar</small>
+                <strong id="cart-total">R$ 0,00</strong>
+            </div>
+            <button class="checkout-btn" onclick="abrirModal()">Ver sacola</button>
+        </div>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Finalizar Pedido</h2>
+                <button class="close-btn" onclick="fecharModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="input-group">
+                <label>Seu Nome</label>
+                <input type="text" id="cli-nome" placeholder="Ex: João da Silva">
+            </div>
+
+            <div class="input-group">
+                <label>Como deseja receber?</label>
+                <select id="cli-tipo" onchange="alternarCampos()">
+                    <option value="Entrega" selected>Quero receber em casa (Entrega)</option>
+                    <option value="Retirada">Vou buscar no balcão (Retirada)</option>
+                </select>
+            </div>
+
+            <div class="input-group" id="div-endereco">
+                <label>Endereço de Entrega</label>
+                <input type="text" id="cli-end" placeholder="Rua, Número, Bairro e Complemento">
+            </div>
+
+            <div class="input-group">
+                <label>Forma de Pagamento</label>
+                <select id="cli-pag" onchange="alternarCampos()">
+                    <option value="" disabled selected>Escolha como pagar...</option>
+                    <option value="Pix">Pix (Chave com entregador)</option>
+                    <option value="Cartão de Crédito">Cartão de Crédito (Maquininha)</option>
+                    <option value="Cartão de Débito">Cartão de Débito (Maquininha)</option>
+                    <option value="Dinheiro">Dinheiro Físico</option>
+                </select>
+            </div>
+
+            <div class="input-group" id="div-troco" style="display: none;">
+                <label>Precisa de troco para quanto?</label>
+                <input type="number" id="cli-troco" placeholder="Ex: 50">
+            </div>
+
+            <button class="btn-wpp" onclick="enviarPedido()">
+                <i class="fa-brands fa-whatsapp"></i> Enviar Pedido
+            </button>
+        </div>
+    </div>
+
+    <div id="toast">Adicionado à sacola!</div>
+
+    <script>
+        // SEU NÚMERO DE TESTE AQUI!
+        const WPP_NUMERO = "5514910046391"; 
+
+        // BANCO DE DADOS DOS LANCHES
+        const cardapio = [
+            { id: "esp_1", cat: "Lanches Especiais", nome: "X-Tudo", desc: "1 Hambúrguer 100g, 02 salsichas, bacon, ovo, presunto, queijo, vinagrete, tomate.", preco: 9.90, precoAntigo: 30.00 },
+            { id: "mis_1", cat: "Misto Quente", nome: "Misto Quente", desc: "2 Fatias de Presunto, 2 fatias de queijo, batata palha e molho especial.", preco: 17.00 },
+            { id: "fra_7", cat: "Frango", nome: "Caipira Especial", desc: "File de frango, bacon, milho, Catupiry, presunto, queijo, tomate em rodelas, alface.", preco: 34.00 },
+            { id: "cal_4", cat: "Calabresa", nome: "X-Calabresa Especial", desc: "Calabresa, 2 hambúrgueres, catupiry, presunto, queijo, tomate em rodelas.", preco: 28.00 },
+            { id: "hot_4", cat: "Hot Dog", nome: "Dogão", desc: "02 salsichas, ovo, presunto, queijo, vinagrete, tomate, alface e batata.", preco: 18.00 },
+            { id: "com_3", cat: "Combos", nome: "Combo X-Tudo", desc: "02 X-Tudo + Tubaína 2 Litros trincando.", preco: 58.00, precoAntigo: 60.00 },
+            { id: "beb_1", cat: "Bebidas", nome: "Coca Cola 2L", desc: "Garrafa Pet 2 Litros gelada.", preco: 14.00 }
+        ];
+
+        let carrinho = {};
+
+        // SISTEMA DE HORÁRIO AUTOMÁTICO
+        function atualizarStatusLoja() {
+            const data = new Date();
+            const dia = data.getDay(); 
+            const hora = data.getHours();
+            const minuto = data.getMinutes();
+            const tempoAtualEmMinutos = (hora * 60) + minuto;
+            
+            const abertura = (18 * 60) + 30; // 18:30
+            const fechamento = 23 * 60; // 23:00
+            
+            const diasAbertos = [0, 4, 5, 6]; 
+            const badge = document.getElementById('status-loja');
+            
+            if (diasAbertos.includes(dia) && tempoAtualEmMinutos >= abertura && tempoAtualEmMinutos <= fechamento) {
+                badge.textContent = 'Aberto agora';
+                badge.className = 'badge-aberto';
+            } else {
+                badge.textContent = 'Fechado agora';
+                badge.className = 'badge-fechado';
+            }
+        }
+
+        // RENDERIZAR INTERFACE
+        function initApp() {
+            atualizarStatusLoja(); 
+            setInterval(atualizarStatusLoja, 60000);
+
+            const nav = document.getElementById('nav-categorias');
+            const main = document.getElementById('menu-container');
+            const categorias = [...new Set(cardapio.map(i => i.cat))];
+
+            categorias.forEach((cat, index) => {
+                const idCat = cat.replace(/\s+/g, '-').toLowerCase();
+                nav.innerHTML += `<button class="cat-btn ${index === 0 ? 'active' : ''}" onclick="rolarPara('${idCat}', this)">${cat}</button>`;
+
+                main.innerHTML += `<h2 class="section-title" id="${idCat}">${cat}</h2>`;
+                
+                const itens = cardapio.filter(i => i.cat === cat);
+                itens.forEach(item => {
+                    const riscado = item.precoAntigo ? `<span class="old-price">R$ ${item.precoAntigo.toFixed(2).replace('.', ',')}</span>` : '';
+                    
+                    main.innerHTML += `
+                        <div class="product-card">
+                            <div class="product-info">
+                                <h3>${item.nome}</h3>
+                                <p>${item.desc}</p>
+                                <div class="price-row">
+                                    <span class="price">R$ ${item.preco.toFixed(2).replace('.', ',')}</span>
+                                    ${riscado}
+                                </div>
+                            </div>
+                            <div class="product-right">
+                                <div class="product-img"></div>
+                                <button class="add-btn" id="add-${item.id}" onclick="altQtd('${item.id}', 1)">Adicionar</button>
+                                <div class="qtd-control" id="ctrl-${item.id}">
+                                    <button onclick="altQtd('${item.id}', -1)">-</button>
+                                    <span id="qtd-${item.id}">1</span>
+                                    <button onclick="altQtd('${item.id}', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        // LÓGICA DO CARRINHO
+        function altQtd(id, delta) {
+            if (!carrinho[id]) carrinho[id] = 0;
+            carrinho[id] += delta;
+
+            const btnAdd = document.getElementById(`add-${id}`);
+            const divCtrl = document.getElementById(`ctrl-${id}`);
+
+            if (carrinho[id] <= 0) {
+                delete carrinho[id];
+                btnAdd.style.display = "block";
+                divCtrl.style.display = "none";
+            } else {
+                btnAdd.style.display = "none";
+                divCtrl.style.display = "flex";
+                document.getElementById(`qtd-${id}`).innerText = carrinho[id];
+                if(delta > 0) mostrarToast();
+            }
+            atualizarBarra();
+        }
+
+        function atualizarBarra() {
+            let total = 0;
+            let itens = 0;
+            for (let id in carrinho) {
+                total += cardapio.find(i => i.id === id).preco * carrinho[id];
+                itens += carrinho[id];
+            }
+            
+            const bar = document.getElementById('cart-bar');
+            if (itens > 0) {
+                bar.style.display = "flex";
+                document.getElementById('cart-total').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
+            } else {
+                bar.style.display = "none";
+            }
+        }
+
+        // FUNÇÕES EXTRAS E ANIMAÇÕES
+        function mostrarToast() {
+            const t = document.getElementById("toast");
+            t.className = "show";
+            setTimeout(() => { t.className = t.className.replace("show", ""); }, 3000);
+        }
+
+        function rolarPara(id, elemento) {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            elemento.classList.add('active');
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function abrirModal() { document.getElementById('modal').style.display = 'flex'; }
+        function fecharModal() { document.getElementById('modal').style.display = 'none'; }
+
+        // LÓGICA DO FORMULÁRIO (ENTREGA/RETIRADA E TROCO)
+        function alternarCampos() {
+            const tipo = document.getElementById('cli-tipo').value;
+            const pag = document.getElementById('cli-pag').value;
+            
+            // Mostra ou esconde Endereço
+            if (tipo === 'Retirada') {
+                document.getElementById('div-endereco').style.display = 'none';
+            } else {
+                document.getElementById('div-endereco').style.display = 'block';
+            }
+
+            // Mostra ou esconde Troco
+            if (pag === 'Dinheiro') {
+                document.getElementById('div-troco').style.display = 'block';
+            } else {
+                document.getElementById('div-troco').style.display = 'none';
+            }
+        }
+
+        // GERADOR DE MENSAGEM FINAL
+        function enviarPedido() {
+            const nome = document.getElementById('cli-nome').value;
+            const tipo = document.getElementById('cli-tipo').value;
+            const end = document.getElementById('cli-end').value;
+            const pag = document.getElementById('cli-pag').value;
+            const troco = document.getElementById('cli-troco').value;
+
+            // Validações
+            if(!nome) { alert("Informe seu nome!"); return; }
+            if(tipo === 'Entrega' && !end) { alert("Informe o endereço de entrega!"); return; }
+            if(!pag) { alert("Escolha a forma de pagamento!"); return; }
+
+            let texto = `*NOVO PEDIDO | SERGINHO LANCHES*\n\n`;
+            let total = 0;
+
+            for (let id in carrinho) {
+                const item = cardapio.find(i => i.id === id);
+                const sub = item.preco * carrinho[id];
+                texto += `- ${carrinho[id]}x ${item.nome} (R$ ${sub.toFixed(2).replace('.', ',')})\n`;
+                total += sub;
+            }
+
+            texto += `\n*TOTAL DA COMPRA: R$ ${total.toFixed(2).replace('.', ',')}*\n\n`;
+            texto += `*DADOS DO CLIENTE:*\n`;
+            texto += `Nome: ${nome}\n`;
+            texto += `Pedido para: ${tipo}\n`;
+            
+            if (tipo === 'Entrega') {
+                texto += `Endereco: ${end}\n`;
+            }
+
+            texto += `Pagamento: ${pag}\n`;
+            
+            if (pag === 'Dinheiro') {
+                if (troco) {
+                    texto += `Troco para: R$ ${troco}\n`;
+                } else {
+                    texto += `Troco para: Não precisa de troco\n`;
+                }
+            }
+
+            const url = `https://wa.me/${WPP_NUMERO}?text=${encodeURIComponent(texto)}`;
+            window.open(url, '_blank');
+            fecharModal();
+        }
+
+        initApp();
+    </script>
+</body>
+</html>
