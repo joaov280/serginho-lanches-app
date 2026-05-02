@@ -46,11 +46,11 @@
         .badge-aberto { background: var(--success); color: #000; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
         .badge-fechado { background: var(--primary); color: #fff; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
 
-        /* --- NAV DE CATEGORIAS --- */
+        /* --- NAV DE CATEGORIAS FIXA --- */
         .category-nav {
             position: sticky; top: 0; z-index: 100; background: rgba(15, 15, 17, 0.95); backdrop-filter: blur(10px);
             padding: 15px 20px; display: flex; overflow-x: auto; gap: 10px; border-bottom: 1px solid var(--border);
-            scroll-behavior: smooth; /* Animação ao rolar a barra pro lado */
+            scroll-behavior: smooth;
         }
         .category-nav::-webkit-scrollbar { display: none; }
         .cat-btn {
@@ -61,7 +61,7 @@
 
         /* --- CONTAINER E CARDS --- */
         .container { max-width: 600px; margin: 0 auto; padding: 0 20px; }
-        .section-title { font-size: 1.2rem; font-weight: 700; margin: 30px 0 15px 0; color: var(--text-title); scroll-margin-top: 80px; } /* Ajuste pra âncora não ficar embaixo da barra */
+        .section-title { font-size: 1.2rem; font-weight: 700; margin: 30px 0 15px 0; color: var(--text-title); scroll-margin-top: 80px; }
 
         .product-card {
             background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 16px;
@@ -106,33 +106,23 @@
         .modal-header h2 { font-size: 1.3rem; }
         .close-btn { background: var(--surface); border: none; color: white; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; }
 
-        /* --- MODAL DO PRODUTO (ADICIONAIS) --- */
         .extra-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
-        .extra-info { display: flex; flex-direction: column; }
-        .extra-info span { font-weight: 600; font-size: 0.95rem; }
-        .extra-info small { color: var(--success); font-weight: 600; font-size: 0.85rem; }
-        
-        /* NOVO: Seletor de quantidade para adicionais */
         .mini-qtd { display: flex; align-items: center; gap: 8px; background: var(--surface); border-radius: 8px; border: 1px solid var(--border); padding: 4px; }
         .mini-qtd button { background: var(--border); border: none; color: white; width: 28px; height: 28px; font-size: 1.1rem; cursor: pointer; border-radius: 6px; display: flex; align-items: center; justify-content: center;}
-        .mini-qtd button:active { background: #444; }
         .mini-qtd span { font-weight: bold; font-size: 0.95rem; width: 20px; text-align: center; }
 
         .qtd-seletor { display: flex; align-items: center; background: var(--surface); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; }
         .qtd-seletor button { background: none; border: none; color: white; padding: 15px 20px; font-size: 1.2rem; cursor: pointer; }
         .qtd-seletor span { font-weight: bold; font-size: 1.1rem; width: 30px; text-align: center; }
 
-        /* --- INPUTS E BOTOES --- */
         .input-group { margin-bottom: 16px; }
         .input-group label { display: block; font-size: 0.85rem; color: var(--text-body); margin-bottom: 6px; font-weight: 600;}
         .input-group input, .input-group select {
             width: 100%; padding: 16px; background: var(--surface); color: white;
             border: 1px solid var(--border); border-radius: 12px; font-size: 1rem; outline: none;
         }
-        .input-group input:focus, .input-group select:focus { border-color: var(--primary); }
         .btn-wpp { width: 100%; background: var(--success); color: #000; padding: 16px; border-radius: 12px; border: none; font-weight: 800; font-size: 1.1rem; margin-top: 10px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; }
         
-        /* --- LISTA DA SACOLA NO CHECKOUT --- */
         .cart-item-review { background: var(--surface); padding: 12px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border);}
         .cart-item-info { flex: 1; }
         .cart-item-info h4 { font-size: 0.95rem; margin-bottom: 4px; }
@@ -141,8 +131,7 @@
 
         #toast { visibility: hidden; min-width: 250px; background-color: var(--success); color: #000; text-align: center; border-radius: 30px; padding: 12px 20px; font-weight: 600; position: fixed; z-index: 3000; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 0.9rem; }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
-        @keyframes fadein { from { bottom: 0; opacity: 0; } to { bottom: 30px; opacity: 1; } }
-        @keyframes fadeout { from { bottom: 30px; opacity: 1; } to { bottom: 0; opacity: 0; } }
+        .cep-status { font-size: 0.75rem; color: var(--primary); margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -171,11 +160,11 @@
     <div class="modal" id="modal-produto">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="mp-nome">Nome do Lanche</h2>
+                <h2 id="mp-nome"></h2>
                 <button class="close-btn" onclick="fecharModalProduto()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <p id="mp-desc" style="color: var(--text-body); font-size: 0.9rem; margin-bottom: 10px;"></p>
-            <h3 id="mp-preco" style="color: var(--success); font-size: 1.3rem; margin-bottom: 20px;">R$ 0,00</h3>
+            <h3 id="mp-preco" style="color: var(--success); font-size: 1.3rem; margin-bottom: 20px;"></h3>
 
             <div id="mp-area-adicionais" style="display: none; margin-bottom: 20px;">
                 <h4 style="border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 10px;">Turbine seu lanche</h4>
@@ -194,7 +183,7 @@
                     <button onclick="mudarQtdModal(1)">+</button>
                 </div>
                 <button class="btn-wpp" style="margin-top: 0; background: var(--primary); color: white;" onclick="adicionarNaSacola()">
-                    Adicionar <span id="mp-btn-total">R$ 0,00</span>
+                    Adicionar <span id="mp-btn-total"></span>
                 </button>
             </div>
         </div>
@@ -221,20 +210,27 @@
                 </select>
             </div>
 
-            <div class="input-group" id="div-endereco"><label>Endereço de Entrega</label><input type="text" id="cli-end" placeholder="Rua, Número, Bairro e Complemento"></div>
+            <div id="div-entrega-automatica">
+                <div class="input-group">
+                    <label>CEP (Busca Automática)</label>
+                    <input type="text" id="cli-cep" placeholder="00000-000" maxlength="9" onblur="buscarCEP()">
+                    <span id="cep-status" class="cep-status"></span>
+                </div>
+                <div class="input-group"><label>Rua e Número</label><input type="text" id="cli-end" placeholder="Rua e Número"></div>
+                <div class="input-group"><label>Bairro</label><input type="text" id="cli-bairro" placeholder="Bairro"></div>
+            </div>
 
             <div class="input-group">
                 <label>Forma de Pagamento</label>
                 <select id="cli-pag" onchange="alternarCampos()">
                     <option value="" disabled selected>Escolha como pagar...</option>
                     <option value="Pix">Pix </option>
-                    <option value="Cartão de Crédito">Cartão de Crédito </option>
-                    <option value="Cartão de Débito">Cartão de Débito </option>
+                    <option value="Cartão">Cartão </option>
                     <option value="Dinheiro">Dinheiro Físico</option>
                 </select>
             </div>
 
-            <div class="input-group" id="div-troco" style="display: none;"><label>Precisa de troco para quanto?</label><input type="number" id="cli-troco" placeholder="Ex: 50"></div>
+            <div class="input-group" id="div-troco" style="display: none;"><label>Precisa de troco para quanto?</label><input type="number" id="cli-troco"></div>
 
             <button class="btn-wpp" onclick="enviarPedido()"><i class="fa-brands fa-whatsapp"></i> Fazer Pedido</button>
         </div>
@@ -300,15 +296,16 @@
             { id: "por_2_800", cat: "Porções", nome: "Batata + Bacon (800g)", desc: "Porção de 800g", preco: 33.00 },
             { id: "por_3_500", cat: "Porções", nome: "Batata + Cheddar ou Catupiry (500g)", desc: "Porção de 500g", preco: 27.00 },
             { id: "por_3_800", cat: "Porções", nome: "Batata + Cheddar ou Catupiry (800g)", desc: "Porção de 800g", preco: 35.00 },
-            { id: "por_4_500", cat: "Porções", nome: "Batata + Cheddar e Catupiry (500g)", desc: "Porção de 500g", preco: 31.00 },
+            { id: "por_4_500", cat: "Porções", nome: "Batata + Cheddar e Catupiry (500g)", desc: "Porção de 500g", preco: 29.50 },
             { id: "por_4_800", cat: "Porções", nome: "Batata + Cheddar e Catupiry (800g)", desc: "Porção de 800g", preco: 38.00 },
-            { id: "por_5_500", cat: "Porções", nome: "Batata + Bacon + Cheddar/Catupiry (500g)", desc: "Porção de 500g", preco: 29.50 },
+            { id: "por_5_500", cat: "Porções", nome: "Batata + Bacon + Cheddar/Catupiry (500g)", desc: "Porção de 500g", preco: 31.00 },
             { id: "por_5_800", cat: "Porções", nome: "Batata + Bacon + Cheddar/Catupiry (800g)", desc: "Porção de 800g", preco: 40.00 },
-            { id: "por_6_800", cat: "Porções", nome: "Batata Completa (800g)", desc: "800g de Batata, Bacon, Cheddar, Catupiry e Calabresa", preco: 45.00 },
+            { id: "por_6_800", cat: "Porções", nome: "Batata Completa (800g)", desc: "800g de Batata, Bacon, Cheddar, Catupiry e Calabresa", preco: 50.00 },
 
-            { id: "beb_1", cat: "Bebidas", nome: "Coca Cola 2L", desc: "Garrafa 2 Litros", preco: 14.00 },
+            { id: "beb_1", cat: "Bebidas", nome: "Coca Cola 2L", desc: "Garrafa 2 Litros", preco: 16.00 },
             { id: "beb_3", cat: "Bebidas", nome: "Tubaína Sabores 2L", desc: "Garrafa 2 Litros", preco: 8.00 },
             { id: "beb_4", cat: "Bebidas", nome: "Refrigerante Lata", desc: "Lata 350ml", preco: 6.00 },
+            { id: "beb_cerveja", cat: "Bebidas", nome: "Cerveja Lata", desc: "Cerveja Gelada 350ml", preco: 6.00 },
 
             { id: "suc_1", cat: "Sucos", nome: "Suco de Laranja", desc: "Copo 500ml", preco: 12.00 },
             { id: "suc_2", cat: "Sucos", nome: "Suco de Limão", desc: "Copo 500ml", preco: 12.00 },
@@ -318,321 +315,238 @@
             { id: "suc_6", cat: "Sucos", nome: "Laranja c/ Morango", desc: "Copo 500ml", preco: 15.00 }
         ];
 
-        let carrinho = []; 
+        let carrinho = JSON.parse(localStorage.getItem('serginho_carrinho')) || []; 
         let modalProdutoAtual = null;
         let modalQtd = 1;
-        let modalAdicionais = {}; // Salva a quantidade de cada adicional
+        let modalAdicionais = {}; 
 
         function atualizarStatusLoja() {
             const data = new Date();
             const dia = data.getDay(); 
             const hora = data.getHours();
             const minuto = data.getMinutes();
-            const tempoAtualEmMinutos = (hora * 60) + minuto;
-            const abertura = (18 * 60) + 30; // 18:30
-            const fechamento = 23 * 60; // 23:00
-            const diasAbertos = [0, 4, 5, 6]; 
+            const tempoTotal = (hora * 60) + minuto;
+            const abertura = (18 * 60) + 30;
+            const fechamento = 23 * 60;
             const badge = document.getElementById('status-loja');
             
-            if (diasAbertos.includes(dia) && tempoAtualEmMinutos >= abertura && tempoAtualEmMinutos <= fechamento) {
+            if (dia !== 1 && tempoTotal >= abertura && tempoTotal <= fechamento) {
                 badge.textContent = 'Aberto agora'; badge.className = 'badge-aberto';
             } else {
                 badge.textContent = 'Fechado agora'; badge.className = 'badge-fechado';
             }
         }
 
+        async function buscarCEP() {
+            const cep = document.getElementById('cli-cep').value.replace(/\D/g, '');
+            const status = document.getElementById('cep-status');
+            if (cep.length !== 8) return;
+            status.innerText = "Buscando endereço...";
+            try {
+                const resp = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                const data = await resp.json();
+                if (!data.erro) {
+                    document.getElementById('cli-end').value = data.logradouro;
+                    document.getElementById('cli-bairro').value = data.bairro;
+                    status.innerText = "";
+                    document.getElementById('cli-end').focus();
+                } else { status.innerText = "CEP não encontrado."; }
+            } catch (e) { status.innerText = "Erro ao buscar CEP."; }
+        }
+
         function initApp() {
             atualizarStatusLoja(); 
-            setInterval(atualizarStatusLoja, 60000);
-
             const nav = document.getElementById('nav-categorias');
             const main = document.getElementById('menu-container');
             const categorias = [...new Set(cardapio.map(i => i.cat))];
 
             categorias.forEach((cat, index) => {
                 const idCat = cat.replace(/\s+/g, '-').toLowerCase();
-                // O botão agora salva o ID alvo em 'data-target' para o scrollspy funcionar
                 nav.innerHTML += `<button class="cat-btn ${index === 0 ? 'active' : ''}" data-target="${idCat}" onclick="rolarPara('${idCat}', this)">${cat}</button>`;
                 main.innerHTML += `<h2 class="section-title" id="${idCat}">${cat}</h2>`;
                 
-                const itens = cardapio.filter(i => i.cat === cat);
-                itens.forEach(item => {
+                cardapio.filter(i => i.cat === cat).forEach(item => {
                     main.innerHTML += `
                         <div class="product-card" onclick="abrirModalProduto('${item.id}')">
                             <div class="product-info">
                                 <h3>${item.nome}</h3>
                                 <p>${item.desc}</p>
-                                <div class="price-row">
-                                    <span class="price">R$ ${item.preco.toFixed(2).replace('.', ',')}</span>
-                                </div>
+                                <div class="price-row"><span class="price">R$ ${item.preco.toFixed(2).replace('.', ',')}</span></div>
                             </div>
-                            <div class="product-right">
-                                <div class="product-img"></div>
-                            </div>
-                        </div>
-                    `;
+                            <div class="product-img"></div>
+                        </div>`;
                 });
             });
 
-            // ATIVAÇÃO DO SCROLLSPY (Rastreador de barra de rolagem)
+            // Lógica de Acompanhamento (Scrollspy Inteligente)
             window.addEventListener('scroll', () => {
-                const scrollPos = window.scrollY + 100; // Pega a posição da tela com uma margem de segurança
-                let activeId = '';
+                const sections = document.querySelectorAll('.section-title');
+                const navButtons = document.querySelectorAll('.cat-btn');
+                let current = "";
 
-                document.querySelectorAll('.section-title').forEach(sec => {
-                    if (sec.offsetTop <= scrollPos) {
-                        activeId = sec.id;
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 120) {
+                        current = section.getAttribute('id');
                     }
                 });
 
-                if (activeId) {
-                    document.querySelectorAll('.cat-btn').forEach(btn => {
-                        if (btn.dataset.target === activeId) {
-                            if (!btn.classList.contains('active')) {
-                                btn.classList.add('active');
-                                // Rola a barra horizontal sozinha para mostrar o botão ativo
-                                btn.scrollIntoView({ inline: 'center', behavior: 'smooth', block: 'nearest' });
-                            }
-                        } else {
-                            btn.classList.remove('active');
-                        }
-                    });
-                }
+                navButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.getAttribute('data-target') === current) {
+                        btn.classList.add('active');
+                        nav.scrollTo({
+                            left: btn.offsetLeft - (nav.offsetWidth / 2) + (btn.offsetWidth / 2),
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            atualizarBarra();
+        }
+
+        function rolarPara(id, btn) {
+            const target = document.getElementById(id);
+            const offset = 100;
+            const bodyRect = document.body.getBoundingClientRect().top;
+            const elementRect = target.getBoundingClientRect().top;
+            const elementPosition = elementRect - bodyRect;
+            const offsetPosition = elementPosition - offset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: "smooth"
             });
         }
 
-        // --- LÓGICA DO MODAL DE PRODUTO E ADICIONAIS ---
         function abrirModalProduto(id) {
             modalProdutoAtual = cardapio.find(i => i.id === id);
-            modalQtd = 1;
-            modalAdicionais = {}; // Zera os adicionais anteriores
-            
+            modalQtd = 1; modalAdicionais = {};
             document.getElementById('mp-nome').innerText = modalProdutoAtual.nome;
             document.getElementById('mp-desc').innerText = modalProdutoAtual.desc;
-            document.getElementById('mp-obs').value = '';
             document.getElementById('mp-qtd').innerText = modalQtd;
+            document.getElementById('mp-obs').value = '';
 
-            const aceitaAdicional = ['Lanches', 'Especiais', 'Porções'].includes(modalProdutoAtual.cat);
-            const areaAdicionais = document.getElementById('mp-area-adicionais');
-            const listaAdicionais = document.getElementById('mp-lista-adicionais');
-            
-            listaAdicionais.innerHTML = '';
-            if (aceitaAdicional) {
-                areaAdicionais.style.display = 'block';
+            const lista = document.getElementById('mp-lista-adicionais');
+            lista.innerHTML = '';
+            if (['Lanches', 'Especiais', 'Porções'].includes(modalProdutoAtual.cat)) {
+                document.getElementById('mp-area-adicionais').style.display = 'block';
                 acrescimosGlobais.forEach(add => {
-                    listaAdicionais.innerHTML += `
+                    lista.innerHTML += `
                         <div class="extra-item">
-                            <div class="extra-info">
-                                <span>${add.nome}</span>
-                                <small>+ R$ ${add.preco.toFixed(2).replace('.', ',')}</small>
-                            </div>
+                            <div class="extra-info"><span>${add.nome}</span><small>+ R$ ${add.preco.toFixed(2).replace('.', ',')}</small></div>
                             <div class="mini-qtd">
                                 <button onclick="mudarQtdAddon('${add.id}', -1)">-</button>
                                 <span id="add-qtd-${add.id}">0</span>
                                 <button onclick="mudarQtdAddon('${add.id}', 1)">+</button>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 });
-            } else {
-                areaAdicionais.style.display = 'none';
-            }
-
-            calcularTotalModalProduto();
+            } else { document.getElementById('mp-area-adicionais').style.display = 'none'; }
+            calcularTotalModal();
             document.getElementById('modal-produto').style.display = 'flex';
         }
 
-        function fecharModalProduto() { document.getElementById('modal-produto').style.display = 'none'; }
-
-        function mudarQtdModal(delta) {
-            modalQtd += delta;
-            if (modalQtd < 1) modalQtd = 1;
-            document.getElementById('mp-qtd').innerText = modalQtd;
-            calcularTotalModalProduto();
+        function mudarQtdAddon(id, delta) {
+            modalAdicionais[id] = (modalAdicionais[id] || 0) + delta;
+            if (modalAdicionais[id] < 0) modalAdicionais[id] = 0;
+            document.getElementById(`add-qtd-${id}`).innerText = modalAdicionais[id];
+            calcularTotalModal();
         }
 
-        function mudarQtdAddon(idAddon, delta) {
-            if (!modalAdicionais[idAddon]) modalAdicionais[idAddon] = 0;
-            modalAdicionais[idAddon] += delta;
-            if (modalAdicionais[idAddon] < 0) modalAdicionais[idAddon] = 0;
-            
-            document.getElementById(`add-qtd-${idAddon}`).innerText = modalAdicionais[idAddon];
-            calcularTotalModalProduto();
-        }
-
-        function calcularTotalModalProduto() {
-            let precoUnitario = modalProdutoAtual.preco;
-            
-            // Soma todos os adicionais multiplicados pela quantidade de cada um
-            for (let idAddon in modalAdicionais) {
-                if (modalAdicionais[idAddon] > 0) {
-                    const add = acrescimosGlobais.find(a => a.id === idAddon);
-                    precoUnitario += (add.preco * modalAdicionais[idAddon]);
-                }
-            }
-
-            document.getElementById('mp-preco').innerText = `R$ ${precoUnitario.toFixed(2).replace('.', ',')}`;
-            const total = precoUnitario * modalQtd;
-            document.getElementById('mp-btn-total').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
+        function calcularTotalModal() {
+            let pUnit = modalProdutoAtual.preco;
+            for (let id in modalAdicionais) { if (modalAdicionais[id] > 0) pUnit += (acrescimosGlobais.find(a => a.id === id).preco * modalAdicionais[id]); }
+            document.getElementById('mp-preco').innerText = `R$ ${pUnit.toFixed(2).replace('.', ',')}`;
+            document.getElementById('mp-btn-total').innerText = `R$ ${(pUnit * modalQtd).toFixed(2).replace('.', ',')}`;
         }
 
         function adicionarNaSacola() {
-            let extrasSelecionados = [];
-            
-            for (let idAddon in modalAdicionais) {
-                if (modalAdicionais[idAddon] > 0) {
-                    extrasSelecionados.push({
-                        item: acrescimosGlobais.find(a => a.id === idAddon),
-                        qtdExtra: modalAdicionais[idAddon]
-                    });
-                }
-            }
-
-            const obs = document.getElementById('mp-obs').value.trim();
-
-            carrinho.push({
-                item: modalProdutoAtual,
-                extras: extrasSelecionados,
-                obs: obs,
-                qtd: modalQtd
-            });
-
+            let extras = [];
+            for (let id in modalAdicionais) { if (modalAdicionais[id] > 0) extras.push({ item: acrescimosGlobais.find(a => a.id === id), qtd: modalAdicionais[id] }); }
+            carrinho.push({ item: modalProdutoAtual, extras, obs: document.getElementById('mp-obs').value, qtd: modalQtd });
+            localStorage.setItem('serginho_carrinho', JSON.stringify(carrinho));
             atualizarBarra();
             fecharModalProduto();
             mostrarToast();
         }
 
-        // --- LÓGICA DO CARRINHO E CHECKOUT ---
         function atualizarBarra() {
             let total = 0;
-            let qtdItens = 0;
-            
-            carrinho.forEach(cartItem => {
-                let precoUnitario = cartItem.item.preco;
-                cartItem.extras.forEach(e => precoUnitario += (e.item.preco * e.qtdExtra));
-                total += precoUnitario * cartItem.qtd;
-                qtdItens += cartItem.qtd;
+            carrinho.forEach(c => {
+                let p = c.item.preco;
+                c.extras.forEach(e => p += (e.item.preco * e.qtd));
+                total += p * c.qtd;
             });
-            
-            const bar = document.getElementById('cart-bar');
-            if (qtdItens > 0) {
-                bar.style.display = "flex";
-                document.getElementById('cart-total').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
-            } else {
-                bar.style.display = "none";
-                fecharModalCheckout();
-            }
+            document.getElementById('cart-bar').style.display = carrinho.length ? 'flex' : 'none';
+            document.getElementById('cart-total').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
         }
 
-        function abrirModalCheckout() { 
-            renderizarRevisaoSacola();
-            document.getElementById('modal-checkout').style.display = 'flex'; 
-        }
-        function fecharModalCheckout() { document.getElementById('modal-checkout').style.display = 'none'; }
-
-        function renderizarRevisaoSacola() {
+        function abrirModalCheckout() {
             const div = document.getElementById('lista-revisao-sacola');
             div.innerHTML = '';
-
-            carrinho.forEach((cartItem, index) => {
-                let precoUnitario = cartItem.item.preco;
-                let descExtras = '';
-                
-                if (cartItem.extras.length > 0) {
-                    descExtras = `Com: ` + cartItem.extras.map(e => `${e.qtdExtra}x ${e.item.nome}`).join(', ') + `<br>`;
-                    cartItem.extras.forEach(e => precoUnitario += (e.item.preco * e.qtdExtra));
+            carrinho.forEach((c, i) => {
+                let textoExtras = '';
+                if (c.extras && c.extras.length > 0) {
+                    textoExtras = `<p style="font-size: 0.8rem; color: var(--text-body); margin-top: 4px;">
+                        <i class="fa-solid fa-plus" style="font-size: 0.7rem;"></i> 
+                        ${c.extras.map(e => `${e.qtd}x ${e.item.nome}`).join(', ')}
+                    </p>`;
                 }
-                
-                let descObs = cartItem.obs ? `Obs: ${cartItem.obs}` : '';
-                let subtotal = precoUnitario * cartItem.qtd;
-
+                let textoObs = c.obs ? `<p style="font-size: 0.8rem; color: var(--primary); margin-top: 2px;">Obs: ${c.obs}</p>` : '';
                 div.innerHTML += `
                     <div class="cart-item-review">
                         <div class="cart-item-info">
-                            <h4>${cartItem.qtd}x ${cartItem.item.nome}</h4>
-                            <p>${descExtras} ${descObs}</p>
-                            <span style="color: var(--success); font-weight: bold; font-size: 0.9rem;">R$ ${subtotal.toFixed(2).replace('.', ',')}</span>
+                            <h4>${c.qtd}x ${c.item.nome}</h4>
+                            ${textoExtras}
+                            ${textoObs}
                         </div>
-                        <button class="btn-remove" onclick="removerItem(${index})"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                `;
+                        <button class="btn-remove" onclick="removerItem(${i})"><i class="fa-solid fa-trash"></i></button>
+                    </div>`;
             });
-        }
-
-        function removerItem(index) {
-            carrinho.splice(index, 1);
-            atualizarBarra();
-            if(carrinho.length > 0) renderizarRevisaoSacola();
+            document.getElementById('modal-checkout').style.display = 'flex';
         }
 
         function alternarCampos() {
             const tipo = document.getElementById('cli-tipo').value;
-            const pag = document.getElementById('cli-pag').value;
-            
-            document.getElementById('div-endereco').style.display = tipo === 'Retirada' ? 'none' : 'block';
-            document.getElementById('div-troco').style.display = pag === 'Dinheiro' ? 'block' : 'none';
+            document.getElementById('div-entrega-automatica').style.display = tipo === 'Entrega' ? 'block' : 'none';
+            document.getElementById('div-troco').style.display = document.getElementById('cli-pag').value === 'Dinheiro' ? 'block' : 'none';
         }
 
-        // --- GERAÇÃO DA MENSAGEM DO WHATSAPP ---
         function enviarPedido() {
             const nome = document.getElementById('cli-nome').value;
-            const tipo = document.getElementById('cli-tipo').value;
-            const end = document.getElementById('cli-end').value;
-            const pag = document.getElementById('cli-pag').value;
-            const troco = document.getElementById('cli-troco').value;
-
-            if(!nome) { alert("Informe seu nome!"); return; }
-            if(tipo === 'Entrega' && !end) { alert("Informe o endereço de entrega!"); return; }
-            if(!pag) { alert("Escolha a forma de pagamento!"); return; }
-
+            if(!nome) return alert("Seu nome é necessário!");
             let texto = `*NOVO PEDIDO | SERGINHO LANCHES*\n\n`;
-            let totalPedido = 0;
-
-            carrinho.forEach(cartItem => {
-                let precoUnitario = cartItem.item.preco;
-                cartItem.extras.forEach(e => precoUnitario += (e.item.preco * e.qtdExtra));
-                let subtotal = precoUnitario * cartItem.qtd;
-                totalPedido += subtotal;
-
-                texto += `▪️ *${cartItem.qtd}x ${cartItem.item.nome}*\n`;
-                if(cartItem.extras.length > 0) {
-                    texto += `   ➕ Adicionais: ${cartItem.extras.map(e => `${e.qtdExtra}x ${e.item.nome}`).join(', ')}\n`;
-                }
-                if(cartItem.obs) texto += `   📝 Obs: ${cartItem.obs}\n`;
-                texto += `   💵 Subtotal: R$ ${subtotal.toFixed(2).replace('.', ',')}\n\n`;
+            let total = 0;
+            carrinho.forEach(c => {
+                let pU = c.item.preco;
+                c.extras.forEach(e => pU += (e.item.preco * e.qtd));
+                let sub = pU * c.qtd; total += sub;
+                texto += `▪️ *${c.qtd}x ${c.item.nome}*\n`;
+                if(c.extras.length) texto += `   ➕ Adicionais: ${c.extras.map(e => `${e.qtd}x ${e.item.nome}`).join(', ')}\n`;
+                if(c.obs) texto += `   📝 Obs: ${c.obs}\n`;
+                texto += `   💵 Sub: R$ ${sub.toFixed(2).replace('.', ',')}\n\n`;
             });
-
-            texto += `💰 *TOTAL DA COMPRA: R$ ${totalPedido.toFixed(2).replace('.', ',')}*\n\n`;
-            texto += `*DADOS DO CLIENTE:*\n`;
-            texto += `👤 Nome: ${nome}\n`;
-            texto += `🛵 Pedido para: ${tipo}\n`;
-            if (tipo === 'Entrega') texto += `📍 Endereco: ${end}\n`;
-            
-            texto += `💳 Pagamento: ${pag}\n`;
-            if (pag === 'Dinheiro') {
-                texto += troco ? `🪙 Troco para: R$ ${troco}\n` : `🪙 Troco: Não precisa\n`;
+            texto += `💰 *TOTAL: R$ ${total.toFixed(2).replace('.', ',')}*\n\n`;
+            texto += `👤 Cliente: ${nome}\n🛵 Tipo: ${document.getElementById('cli-tipo').value}\n`;
+            if(document.getElementById('cli-tipo').value === 'Entrega') {
+                texto += `📍 Endereço: ${document.getElementById('cli-end').value}, ${document.getElementById('cli-bairro').value}\n(CEP: ${document.getElementById('cli-cep').value})\n`;
             }
-
-            const url = `https://wa.me/${WPP_NUMERO}?text=${encodeURIComponent(texto)}`;
-            window.open(url, '_blank');
-            fecharModalCheckout();
+            texto += `💳 Pagamento: ${document.getElementById('cli-pag').value}`;
+            window.open(`https://wa.me/${WPP_NUMERO}?text=${encodeURIComponent(texto)}`, '_blank');
+            carrinho = []; localStorage.removeItem('serginho_carrinho'); atualizarBarra();
         }
 
-        function mostrarToast() {
-            const t = document.getElementById("toast");
-            t.className = "show";
-            setTimeout(() => { t.className = t.className.replace("show", ""); }, 3000);
-        }
-
-        function rolarPara(id, elemento) {
-            // Oculta a barra do carrinho temporariamente para não atrapalhar o scroll
-            const bar = document.getElementById('cart-bar');
-            const displayOriginal = bar.style.display;
-            bar.style.display = 'none';
-            
-            document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
-            
-            setTimeout(() => { if (carrinho.length > 0) bar.style.display = displayOriginal; }, 800);
+        function fecharModalProduto() { document.getElementById('modal-produto').style.display = 'none'; }
+        function fecharModalCheckout() { document.getElementById('modal-checkout').style.display = 'none'; }
+        function mudarQtdModal(d) { modalQtd = Math.max(1, modalQtd + d); document.getElementById('mp-qtd').innerText = modalQtd; calcularTotalModal(); }
+        function mostrarToast() { const t = document.getElementById("toast"); t.className = "show"; setTimeout(() => t.className = "", 3000); }
+        function removerItem(i) { 
+            carrinho.splice(i, 1); 
+            localStorage.setItem('serginho_carrinho', JSON.stringify(carrinho));
+            atualizarBarra(); 
+            abrirModalCheckout(); 
         }
 
         initApp();
