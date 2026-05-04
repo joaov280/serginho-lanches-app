@@ -320,7 +320,25 @@
         let modalQtd = 1;
         let modalAdicionais = {}; 
 
-        function atualizarStatusLoja() {
+       function atualizarStatusLoja() {
+            const badge = document.getElementById('status-loja');
+            
+            // BUSCA O COMANDO DO PAINEL ADMIN
+            const statusManual = localStorage.getItem('serginho_status_manual');
+
+            if (statusManual === 'fechado') {
+                badge.textContent = 'Fechado agora'; 
+                badge.className = 'badge-fechado';
+                return; // Para a execução aqui
+            } 
+            
+            if (statusManual === 'aberto') {
+                badge.textContent = 'Aberto agora'; 
+                badge.className = 'badge-aberto';
+                return; // Para a execução aqui
+            }
+
+            // SE NÃO TIVER COMANDO MANUAL, VOLTA PRO HORÁRIO AUTOMÁTICO
             const data = new Date();
             const dia = data.getDay(); 
             const hora = data.getHours();
@@ -328,15 +346,18 @@
             const tempoTotal = (hora * 60) + minuto;
             const abertura = (18 * 60) + 30;
             const fechamento = 23 * 60;
-            const badge = document.getElementById('status-loja');
             
             if (dia !== 1 && tempoTotal >= abertura && tempoTotal <= fechamento) {
-                badge.textContent = 'Aberto agora'; badge.className = 'badge-aberto';
+                badge.textContent = 'Aberto agora'; 
+                badge.className = 'badge-aberto';
             } else {
-                badge.textContent = 'Fechado agora'; badge.className = 'badge-fechado';
+                badge.textContent = 'Fechado agora'; 
+                badge.className = 'badge-fechado';
             }
         }
 
+        // Adicionamos um intervalo curto para o site "perceber" a mudança do admin rápido
+        setInterval(atualizarStatusLoja, 2000);
         async function buscarCEP() {
             const cep = document.getElementById('cli-cep').value.replace(/\D/g, '');
             const status = document.getElementById('cep-status');
